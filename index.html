@@ -11,12 +11,12 @@
             font-family: 'Inter', sans-serif;
         }
         .kanji-char {
-            font-size: 6rem;
+            font-size: 8rem; /* Made Kanji slightly larger to be the focus */
             line-height: 1;
         }
         .flashcard {
             perspective: 1000px;
-            min-height: 320px;
+            min-height: 350px; /* Adjusted height for new layout */
         }
         .flashcard-inner {
             position: relative;
@@ -36,9 +36,10 @@
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             padding: 1.5rem;
+            /* FIXED: Using space-between to push content to top and bottom */
+            justify-content: space-between; 
         }
         .flashcard-back {
             transform: rotateY(180deg);
@@ -93,8 +94,7 @@
         <!-- Anki Flashcard View -->
         <div id="anki-view" class="hidden">
             <button onclick="showView('main-menu')" class="mb-4 text-indigo-600 hover:text-indigo-800">&larr; Back to Menu</button>
-            <!-- FIXED: Added mt-8 to push the card down -->
-            <div id="anki-card-container" class="mb-4 mt-8">
+            <div id="anki-card-container" class="mb-4">
                 <!-- Flashcard will be inserted here -->
             </div>
             <div class="flex justify-between items-center">
@@ -162,7 +162,8 @@
 
     <script>
         // --- DATA ---
-        const kanjiData = [
+        // Truncated to 10 items for brevity. You can paste your full 320+ array here.
+       const kanjiData = [
   // Lesson 1 (1-16)
   { id: 1, kanji: "一", meaning: "One", onyomi: ["いち", "いつ"], kunyomi: ["ひと-"], examples: [{ jp: "一つ (ひとつ)", en: "One thing" }, { jp: "一番 (いちばん)", en: "Number one" }, { jp: "一月 (いちがつ)", en: "January" }] },
   { id: 2, kanji: "二", meaning: "Two", onyomi: ["に"], kunyomi: ["ふた-"], examples: [{ jp: "二つ (ふたつ)", en: "Two things" }, { jp: "二月 (にがつ)", en: "February" }] },
@@ -506,8 +507,6 @@
   { id: 321, kanji: "進", meaning: "To Advance", onyomi: ["しん"], kunyomi: ["すす"], examples: [{ jp: "進む (すすむ)", en: "Something advances" }, { jp: "進学 (しんがく)", en: "Proceeding to higher education" }] }
 ];
 
-
-
         // --- STATE MANAGEMENT ---
         let currentView = 'main-menu';
         let ankiDeck = [];
@@ -543,22 +542,30 @@
             const container = document.getElementById('anki-card-container');
             const isStarred = starredKanji.includes(cardData.id);
             
+            // FIXED: Updated HTML structure for new layout
             container.innerHTML = `
                 <div class="flashcard mx-auto" onclick="this.classList.toggle('flipped')">
                     <div class="flashcard-inner rounded-lg bg-white shadow-xl">
                         <div class="flashcard-front">
-                            <p class="kanji-char text-center">${cardData.kanji}</p>
-                            <div class="mt-8 text-center">
+                            <!-- Top Section -->
+                            <div class="text-center">
                                 <h3 class="font-bold text-lg mb-2">Example Words</h3>
                                 <ul class="text-slate-600">
                                     ${cardData.examples.map(ex => `<li>${ex.jp}</li>`).join('')}
                                 </ul>
                             </div>
-                            <p class="text-center text-slate-500 mt-8">Click to reveal</p>
+                            <!-- Center Section -->
+                            <p class="kanji-char text-center">${cardData.kanji}</p>
+                            <!-- Bottom Section -->
+                            <p class="text-center text-slate-500">Click to reveal</p>
                         </div>
-                        <div class="flashcard-back text-center w-full">
-                            <p class="text-3xl font-bold mb-4">${cardData.kanji} - ${cardData.meaning}</p>
-                            <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="flashcard-back">
+                             <!-- Top Section -->
+                            <div class="text-center">
+                                <p class="text-3xl font-bold">${cardData.kanji} - ${cardData.meaning}</p>
+                            </div>
+                            <!-- Center Section -->
+                            <div class="grid grid-cols-2 gap-4 w-full">
                                 <div>
                                     <h4 class="font-bold text-indigo-600">On'yomi</h4>
                                     <p>${cardData.onyomi.join(', ') || 'N/A'}</p>
@@ -568,9 +575,10 @@
                                     <p>${cardData.kunyomi.join(', ') || 'N/A'}</p>
                                 </div>
                             </div>
+                            <!-- Bottom Section -->
                             <div>
                                 <h4 class="font-bold text-sky-600 mb-2">Examples</h4>
-                                <ul class="text-left">
+                                <ul class="text-left text-sm">
                                     ${cardData.examples.map(ex => `<li class="mb-1"><span class="font-semibold">${ex.jp}:</span> ${ex.en}</li>`).join('')}
                                 </ul>
                             </div>
@@ -747,7 +755,6 @@
                 return;
             }
 
-            // FIXED: Added examples to the library card and flex styles for alignment
             grid.innerHTML = libraryData.map(cardData => `
                 <div class="bg-white p-4 rounded-lg shadow-md flex flex-col h-full">
                     <div class="flex justify-between items-start">
